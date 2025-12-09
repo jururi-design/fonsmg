@@ -59,15 +59,29 @@ body {
     pointer-events: none;
 }
 
-/* Asegurar que el canvas/renderer ocupe todo */
+/* --- ADICIÓN: selector para el div/canvas que usamos desde JS --- */
+/* Asegura que el renderer que se append() al #heroCanvas ocupe todo el fondo */
+#heroCanvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;              /* queda detrás del .hero-bg (que tiene z-index:1) y del contenido */
+    pointer-events: none;    /* no bloqueará clicks */
+    display: block;
+}
+
+/* Si el renderer crea un <canvas> directo dentro de .hero-bg, aseguramos tamaño correcto */
 .hero-bg canvas,
 .hero-bg > canvas,
-.hero-bg > iframe {
+.hero-bg > iframe,
+#heroCanvas canvas {
     width: 100% !important;
     height: 100% !important;
     display: block;
 }
 
+/* Aseguramos que el contenido principal esté por encima */
 .hero-content {
     position: relative;
     z-index: 2;
@@ -296,3 +310,27 @@ img {
     text-shadow: 0 6px 18px rgba(0,0,0,0.6);
     pointer-events: none;
 }
+
+/* ================================
+   UTILIDADES PARA ANIMACIONES JS
+   (opcionales: usadas por IntersectionObserver / GSAP)
+================================ */
+/* Estado inicial oculto para elementos que se animan al hacer scroll */
+.hidden {
+    opacity: 0;
+    transform: translateY(24px);
+    will-change: opacity, transform;
+}
+
+/* Estado visible/modo 'mostrado' */
+.show {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.9s cubic-bezier(.2,.9,.2,1), transform 0.9s cubic-bezier(.2,.9,.2,1);
+}
+
+/* Clase para desactivar pointer-events en el fondo si necesitas bloquear interacción */
+.bg-no-interact {
+    pointer-events: none !important;
+}
+
