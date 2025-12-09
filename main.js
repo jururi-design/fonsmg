@@ -1,163 +1,305 @@
-/* ------------ RESET GENERAL ------------ */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+// main.js - Reemplaza todo el archivo con este contenido
+// -----------------------------------------------------
+// Versión integrada: Three.js (fondo), GSAP+ScrollTrigger
+// SVG draw, gallery reveal, hero entrance.
+// -----------------------------------------------------
 
-body {
-  font-family: Arial, sans-serif;
-  background: #ffffff;
-  overflow-x: hidden;
-}
+window.addEventListener("DOMContentLoaded", () => {
+  // ---------- Helpers ----------
+  const safeLog = (...args) => {
+    if (window.console && console.info) console.info("[main.js]", ...args);
+  };
 
-/* ------------ CONTENEDOR DE FONDO 3D ------------ */
-#heroCanvas {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  z-index: -1;
-  pointer-events: none;
-}
+  // ---------- 1) Three.js - Fondo de partículas ----------
+  (function initThreeBackground() {
+    if (typeof THREE === "undefined") {
+      safeLog("Three.js no está cargado — se omite fondo 3D.");
+      return;
+    }
 
-/* ------------ NAVBAR ------------ */
-header {
-  width: 100%;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 10;
-  background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(10px);
-}
+    const container = document.getElementById("heroCanvas");
+    if (!container) {
+      safeLog("No existe #heroCanvas en el HTML — omitiendo fondo 3D.");
+      return;
+    }
 
-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 40px;
-}
+    // Scene / camera / renderer
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 3000);
+    camera.position.z = 450;
 
-nav a {
-  color: #000000;
-  text-decoration: none;
-  margin-left: 25px;
-  font-size: 18px;
-  font-weight: bold;
-}
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setPixelRatio(window.devicePixelRatio || 1);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(0x000000, 0); // transparente (fondo CSS sigue visible)
+    container.appendChild(renderer.domElement);
 
-nav a:hover {
-  color: #ff6600;
-}
+    // Partículas
+    const COUNT = 1200;
+    const positions = new Float32Array(COUNT * 3);
 
-/* ------------ HERO SECTION ------------ */
-.hero-section {
-  width: 100%;
-  height: 100vh;
-  position: relative;
-  color: white;
-  display: flex;
-  align-items: center;
-  padding-left: 50px;
-}
+    for (let i = 0; i < COUNT; i++) {
+      const i3 = i * 3;
+      positions[i3 + 0] = (Math.random() - 0.5) * 1600; // x
+      positions[i3 + 1] = (Math.random() - 0.5) * 900;  // y
+      positions[i3 + 2] = (Math.random() - 0.5) * 800;  // z
+    }
 
-/* --- TRANSICIÓN DEL TEXTO DEL HERO --- */
-.hero-text {
-  opacity: 0;
-  transform: translateY(40px);
-  transition: 1s ease;
-}
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
 
-/* ⭐ ESTA CLASE ERA LA QUE FALTABA */
-.hero-text.show {
-  opacity: 1;
-  transform: translateY(0);
-}
+    const material = new THREE.PointsMaterial({
+      size: 2.0,
+      color: 0x24d2fe,
+      opacity: 0.85,
+      transparent: true,
+      depthWrite: false
+    });
 
-.hero-text h1 {
-  font-size: 60px;
-  font-weight: bold;
-  margin-bottom: 15px;
-}
+    const points = new THREE.Points(geometry, material);
+    scene.add(points);
 
-.hero-text p {
-  font-size: 22px;
-  max-width: 500px;
-}
+    // Slight ambient light (not required for PointsMaterial but ok to keep scene consistent)
+    const ambient = new THREE.AmbientLight(0xffffff, 0.2);
+    scene.add(ambient);
 
-/* ------------ BOTÓN PRINCIPAL ------------ */
-.btn-primary {
-  display: inline-block;
-  margin-top: 20px;
-  padding: 12px 25px;
-  background: #ff6600;
-  color: white;
-  text-decoration: none;
-  border-radius: 8px;
-  font-size: 18px;
-}
+    // Animación
+    let rafId = null;
+    let lastMouse = { x: 0, y: 0 };
+    let targetRot = { x: 0, y: 0 };
 
-.btn-primary:hover {
-  background: #cc5200;
-}
+    function onMouseMove(e) {
+      // suave parallax ligado a cursor - pequeño efecto
+      const nx = (e.clientX / window.innerWidth) - 0.5;
+      const ny = (e.clientY / window.innerHeight) - 0.5;
+      targetRot.y = nx * 0.08;
+      targetRot.x = -ny * 0.04;
+    }
+    window.addEventListener("pointermove", onMouseMove, { passive: true });
 
-/* ------------ GALERÍA DE IMÁGENES ------------ */
-#galeria {
-  padding: 80px 40px;
-  background: #f7f7f7;
-}
+    function animate() {
+      // rotación base
+      points.rotation.y += 0.0009;
+      points.rotation.x += 0.00045;
 
-#galeria h2 {
-  text-align: center;
-  font-size: 40px;
-  margin-bottom: 40px;
-}
+      // blend hacia target (suavizado)
+      points.rotation.x += (targetRot.x - points.rotation.x) * 0.02;
+      points.rotation.y += (targetRot.y - points.rotation.y) * 0.02;
 
-.galeria-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 25px;
-}
+      renderer.render(scene, camera);
+      rafId = requestAnimationFrame(animate);
+    }
+    animate();
 
-.galeria-grid img {
-  width: 100%;
-  height: 260px;
-  object-fit: cover;
-  border-radius: 12px;
-  transition: transform .3s ease;
-}
+    // Resize
+    function handleResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+    window.addEventListener("resize", handleResize);
 
-.galeria-grid img:hover {
-  transform: scale(1.05);
-}
+    // Guardar cleanup por si se necesita
+    container._threeCleanup = () => {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("pointermove", onMouseMove);
+      renderer.dispose();
+      geometry.dispose();
+      material.dispose();
+      // remover canvas del DOM
+      if (renderer.domElement && renderer.domElement.parentNode) {
+        renderer.domElement.parentNode.removeChild(renderer.domElement);
+      }
+    };
 
-/* ------------ FOOTER ------------ */
-footer {
-  background: #222;
-  color: white;
-  padding: 40px;
-  text-align: center;
-  margin-top: 40px;
-}
+    safeLog("Fondo 3D inicializado en #heroCanvas.");
+  })();
 
-footer p {
-  font-size: 16px;
-  opacity: 0.8;
-}
 
-/* ------------ ANIMACIONES DESDE JS ------------ */
-.hidden {
-  opacity: 0;
-  transform: translateY(40px);
-  transition: opacity .8s ease, transform .8s ease;
-}
 
-.show {
-  opacity: 1;
-  transform: translateY(0);
-}
+  // ---------- 2) GSAP: registrar ScrollTrigger si existe ----------
+  if (typeof gsap !== "undefined") {
+    try {
+      if (typeof ScrollTrigger !== "undefined") {
+        gsap.registerPlugin(ScrollTrigger);
+      }
+    } catch (e) {
+      safeLog("No se pudo registrar ScrollTrigger:", e);
+    }
+  } else {
+    safeLog("GSAP no está cargado — se omiten animaciones de GSAP.");
+  }
+
+
+
+  // ---------- 3) Hero entrance (GSAP o fallback) ----------
+  (function heroEntrance() {
+    const heroContent = document.querySelector(".hero-content");
+    const heroTitle = document.querySelector(".hero-title");
+    const heroBtn = document.querySelector(".btn-hero");
+
+    if (!heroContent && !heroTitle) return;
+
+    // If GSAP available - use smooth animation
+    if (typeof gsap !== "undefined") {
+      // set initial state
+      gsap.set([heroContent, heroTitle, heroBtn].filter(Boolean), { opacity: 0, y: 30 });
+
+      // timeline
+      const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
+      if (heroTitle) tl.to(heroTitle, { opacity: 1, y: 0, duration: 0.9 });
+      if (heroContent && heroContent !== heroTitle) tl.to(heroContent, { opacity: 1, y: 0, duration: 0.9 }, "-=0.6");
+      if (heroBtn) tl.fromTo(heroBtn, { opacity: 0, scale: 0.96 }, { opacity: 1, scale: 1, duration: 0.6 }, "-=0.35");
+    } else {
+      // Fallback: add .show to .hero-content or .hero-text (si existe)
+      const heroTextEl = document.querySelector(".hero-text") || heroContent;
+      if (heroTextEl) {
+        setTimeout(() => heroTextEl.classList.add("show"), 350);
+      }
+    }
+  })();
+
+
+
+  // ---------- 4) SVG drawing (GSAP+ScrollTrigger or fallback) ----------
+  (function svgDraw() {
+    const svgPath = document.querySelector("#svgLine path");
+    const triggerEl = document.querySelector(".svg-section");
+
+    if (!svgPath || !triggerEl) return;
+
+    const length = (typeof svgPath.getTotalLength === "function") ? svgPath.getTotalLength() : 300;
+    svgPath.style.strokeDasharray = length;
+    svgPath.style.strokeDashoffset = length;
+
+    if (typeof gsap !== "undefined" && typeof ScrollTrigger !== "undefined") {
+      gsap.to(svgPath, {
+        strokeDashoffset: 0,
+        duration: 1.6,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: triggerEl,
+          start: "top 80%",
+          toggleActions: "play none none reverse"
+        }
+      });
+    } else {
+      // Fallback simple: draw when element is in view (IntersectionObserver)
+      const io = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            svgPath.style.transition = "stroke-dashoffset 1.6s cubic-bezier(.2,.9,.2,1)";
+            svgPath.style.strokeDashoffset = "0";
+            obs.disconnect();
+          }
+        });
+      }, { threshold: 0.25 });
+      io.observe(triggerEl);
+    }
+  })();
+
+
+
+  // ---------- 5) Galería: fade-in en cadena ----------
+  (function galleryReveal() {
+    const items = Array.from(document.querySelectorAll(".grid-galeria .item"));
+    if (!items.length) return;
+
+    if (typeof gsap !== "undefined" && typeof ScrollTrigger !== "undefined") {
+      items.forEach((item, i) => {
+        gsap.from(item, {
+          opacity: 0,
+          y: 30,
+          duration: 0.9,
+          ease: "power2.out",
+          delay: i * 0.06,
+          scrollTrigger: {
+            trigger: item,
+            start: "top 85%",
+            toggleActions: "play none none reverse"
+          }
+        });
+      });
+    } else {
+      // Fallback with IntersectionObserver
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("show");
+            // optional: unobserve to avoid repeated triggers
+            io.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.18 });
+
+      items.forEach(i => {
+        // ensure initial hidden state if CSS doesn't
+        i.classList.add("hidden");
+        io.observe(i);
+      });
+    }
+  })();
+
+
+
+  // ---------- 6) Narrativa: aparición suave ----------
+  (function narrativaReveal() {
+    const node = document.querySelector(".narrativa .narrativa-text");
+    if (!node) return;
+
+    if (typeof gsap !== "undefined" && typeof ScrollTrigger !== "undefined") {
+      gsap.from(node, {
+        opacity: 0,
+        y: 40,
+        duration: 1.1,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: ".narrativa",
+          start: "top 80%",
+          toggleActions: "play none none reverse"
+        }
+      });
+    } else {
+      const io = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("show");
+            obs.disconnect();
+          }
+        });
+      }, { threshold: 0.2 });
+      io.observe(node);
+    }
+  })();
+
+
+
+  // ---------- 7) Smooth anchor scroll adjustment (compensar header) ----------
+  (function smoothAnchors() {
+    document.querySelectorAll('a[href^="#"]').forEach(link => {
+      link.addEventListener("click", (e) => {
+        const href = link.getAttribute("href");
+        if (!href || href === "#") return;
+        const target = document.querySelector(href);
+        if (!target) return;
+        e.preventDefault();
+        // ajustar por posible header fijo
+        const headerOffset = document.querySelector("header") ? document.querySelector("header").offsetHeight : 60;
+        const rect = target.getBoundingClientRect();
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const top = rect.top + scrollTop - headerOffset - 12; // pequeño margen
+        window.scrollTo({ top, behavior: "smooth" });
+      });
+    });
+  })();
+
+
+
+  // ---------- 8) Final log ----------
+  safeLog("main.js cargado: animaciones y fondo 3D inicializados (si las librerías están presentes).");
+});
+
 
 
 
