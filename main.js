@@ -63,6 +63,13 @@ nav a:hover {
   padding-left: 50px;
 }
 
+/* --- NUEVO: TRANSICIÓN DEL TEXTO DEL HERO QUE SE ACTIVA DESDE JS --- */
+.hero-text {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: 1s ease;
+}
+
 .hero-text h1 {
   font-size: 60px;
   font-weight: bold;
@@ -145,5 +152,7 @@ footer p {
   opacity: 1;
   transform: translateY(0);
 }
+
+
 
 
