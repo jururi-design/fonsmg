@@ -18,7 +18,7 @@ body {
   left: 0;
   width: 100%;
   height: 100vh;
-  z-index: -1;      /* mantiene el fondo atrás */
+  z-index: -1;
   pointer-events: none;
 }
 
@@ -63,11 +63,17 @@ nav a:hover {
   padding-left: 50px;
 }
 
-/* --- NUEVO: TRANSICIÓN DEL TEXTO DEL HERO QUE SE ACTIVA DESDE JS --- */
+/* --- TRANSICIÓN DEL TEXTO DEL HERO --- */
 .hero-text {
   opacity: 0;
   transform: translateY(40px);
   transition: 1s ease;
+}
+
+/* ⭐ ESTA CLASE ERA LA QUE FALTABA */
+.hero-text.show {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .hero-text h1 {
@@ -152,7 +158,6 @@ footer p {
   opacity: 1;
   transform: translateY(0);
 }
-
 
 
 
