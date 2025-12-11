@@ -4,47 +4,87 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FONSMG — Fondos 4K</title>
-    <link rel="stylesheet" href="style.css" />
 
-    <!-- Three.js CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Estilos -->
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <!-- THREE.JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/three.min.js"></script>
 </head>
-<body>
-    
-    <!-- CONTENEDOR DEL CANVAS 3D -->
-    <div id="bg-animation"></div>
 
-    <header>
-        <h1 class="logo">FONSMG</h1>
+<body>
+
+    <!-- FONDO 3D -->
+    <div id="heroCanvas"></div>
+
+    <!-- HERO -->
+    <header class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">FONSMG</h1>
+            <p class="hero-subtitle">Galería de fondos 4K para transformar tu pantalla</p>
+
+            <a href="#galeria" class="btn-hero">Explorar Fondos</a>
+        </div>
     </header>
 
-    <section class="hero">
-        <h1>Fondos en 4K</h1>
-
-        <!-- NUEVO TEXTO PEQUEÑO (NO rompe nada) -->
-        <p class="hero-mini">Fondos modernos, dinámicos y en alta resolución.</p>
-
-        <a href="#galeria" class="btn-explorar">Explorar Fondos</a>
+    <!-- SECCIÓN EXTRA (para que NO quede vacío) -->
+    <section class="intro-extra">
+        <h2>Bienvenido a la nueva experiencia visual</h2>
+        <p>Explora fondos dinámicos, efectos 3D y una galería en calidad 4K.</p>
     </section>
 
-    <section id="galeria" class="galeria">
-        <h2>Galería de Fondos</h2>
-        <div class="grid">
-            <img src="img/fondo1.jpg" alt="Fondo 1" />
-            <img src="img/fondo2.jpg" alt="Fondo 2" />
-            <img src="img/fondo3.jpg" alt="Fondo 3" />
+    <!-- NARRATIVA -->
+    <section class="narrativa">
+        <div class="narrativa-text">
+            <h2>Explora Nuevas Dimensiones</h2>
+            <p>
+                Esta plataforma reúne una colección de imágenes diseñadas para ofrecer
+                una experiencia visual limpia, envolvente y moderna.
+            </p>
         </div>
     </section>
 
-    <footer>
-        <p>© 2025 FONSMG — Todos los derechos reservados</p>
+    <!-- SVG -->
+    <section class="svg-section">
+        <h2>DISPONIBILIDAD A TU GUSTO</h2>
+
+        <svg id="svgLine" width="300" height="80">
+            <path d="M10 40 L290 40" stroke="#fff" stroke-width="3" fill="none" />
+        </svg>
+
+        <p class="svg-desc">Escoge tu estilo para tu ordenador.</p>
+    </section>
+
+    <!-- GALERÍA -->
+    <section id="galeria" class="galeria">
+        <h2 class="galeria-titulo">Colección de Fondos 4K</h2>
+
+        <div class="grid-galeria">
+            <div class="item"><img src="https://i.pinimg.com/1200x/fd/c7/f2/fdc7f2e71735405e21e0f1914c4b360f.jpg"></div>
+            <div class="item"><img src="https://i.pinimg.com/736x/f9/21/35/f921353b7e89849cd8d726aad75fd80a.jpg"></div>
+            <div class="item"><img src="https://i.pinimg.com/736x/84/bf/30/84bf300d11627e1be7c0ff33dbb5dada.jpg"></div>
+            <div class="item"><img src="https://i.pinimg.com/736x/1a/bc/34/1abc340a1ca19997468b55e594d78130.jpg"></div>
+            <div class="item"><img src="https://i.pinimg.com/736x/7c/6e/73/7c6e738aecb103008cde67e438cfeca0.jpg"></div>
+            <div class="item"><img src="https://i.pinimg.com/1200x/85/b8/60/85b86052fb614689ee3924521e3c8c9f.jpg"></div>
+            <div class="item"><img src="https://i.pinimg.com/1200x/2b/11/75/2b11759af696a853c57e7afb7de4e42c.jpg"></div>
+            <div class="item"><img src="https://i.pinimg.com/1200x/37/9f/68/379f68e61f72874bc4c5920b58966500.jpg"></div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>© 2025 FONSMG — Proyecto Final de Animaciones Web</p>
     </footer>
 
-    <script src="script.js"></script>
+    <!-- JS -->
+    <script src="main.js"></script>
+
 </body>
 </html>
-
-
 
 
 
