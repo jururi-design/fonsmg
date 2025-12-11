@@ -1,136 +1,130 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* RESET */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body { height: 100%; }
 
 body {
   font-family: Arial, sans-serif;
-  background: #ffffff;
+  background: #ffffff; /* mantuve blanco general para coincidir con tu estilo */
+  color: #111;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
 }
 
-/* CANVAS 3D */
-#heroCanvas {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  z-index: -1;
-}
-
-/* HERO */
+/* HERO: organiza título -> descripción -> botón -> canvas */
 .hero {
-  height: 100vh;
+  width: 100%;
+  /* altura mínima para que el hero no quede pequeño en pantallas grandes */
+  min-height: 70vh;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;      /* centra horizontalmente */
+  justify-content: center;  /* centra verticalmente el conjunto */
+  gap: 18px;
+  position: relative;
+  padding: 40px 20px;
+  background: transparent;
+}
+
+/* bloque que contiene título, descripción y botón */
+.hero-content {
+  z-index: 5;
   text-align: center;
-  color: white;
+  max-width: 1000px;
+  width: 100%;
+  padding: 0 20px;
 }
 
+/* título arriba */
 .hero-title {
-  font-size: 70px;
-  font-weight: bold;
+  font-size: 48px;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 6px;
 }
 
+/* descripción debajo del título */
 .hero-subtitle {
-  font-size: 22px;
-  margin-top: 10px;
+  font-size: 18px;
+  color: rgba(0,0,0,0.7);
+  max-width: 900px;
+  margin: 0 auto 12px;
 }
 
-/* BOTÓN */
+/* botón debajo de la descripción */
 .btn-hero {
   display: inline-block;
-  margin-top: 20px;
-  padding: 12px 25px;
+  margin-top: 6px;
+  padding: 12px 26px;
   background: #ff6600;
-  color: white;
+  color: #fff;
   text-decoration: none;
   border-radius: 10px;
-  font-size: 18px;
+  font-size: 16px;
+  font-weight: 600;
+  transition: transform .15s ease, background .15s ease;
+  box-shadow: 0 6px 18px rgba(255,102,0,0.12);
 }
-
 .btn-hero:hover {
-  background: #cc5200;
+  transform: translateY(-3px);
+  background: #e05500;
 }
 
-/* SECCIÓN EXTRA (rellena el espacio vacío) */
-.intro-extra {
-  padding: 80px 40px;
-  text-align: center;
-  background: #fafafa;
+/* CONTENEDOR DEL CANVAS (DEBAJO DEL BOTÓN) */
+.hero-canvas {
+  width: 100%;
+  max-width: 1200px;
+  height: 360px;        /* la animación se muestra en esta área */
+  margin-top: 18px;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.06);
+  background: linear-gradient(180deg, #0d0d0f 0%, #1a1a1a 100%); /* se ve bien la esfera */
 }
 
-.intro-extra h2 {
-  font-size: 36px;
-  margin-bottom: 10px;
-}
-
-.intro-extra p {
-  font-size: 18px;
-  opacity: 0.7;
-}
-
-/* NARRATIVA */
-.narrativa {
-  padding: 80px 40px;
-  text-align: center;
-}
-
-.narrativa-text h2 {
-  font-size: 40px;
-  margin-bottom: 20px;
-}
-
-/* SVG */
-.svg-section {
-  padding: 60px 40px;
-  background: #111;
-  color: white;
-  text-align: center;
-}
-
-.svg-desc {
-  margin-top: 10px;
-  opacity: 0.8;
-}
-
-/* GALERÍA */
+/* SECCIÓN GALERÍA */
 .galeria {
-  padding: 80px 40px;
-  background: #f4f4f4;
+  padding: 60px 30px;
+  background: #fafafa;
+  color: #111;
 }
-
 .galeria-titulo {
+  font-size: 32px;
   text-align: center;
-  font-size: 40px;
-  margin-bottom: 40px;
+  margin-bottom: 22px;
 }
 
 .grid-galeria {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 25px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
+  max-width: 1200px;
+  margin: 0 auto;
+  align-items: center;
 }
 
 .grid-galeria img {
   width: 100%;
-  height: 260px;
-  border-radius: 12px;
+  height: 160px;
   object-fit: cover;
-  transition: 0.3s;
+  border-radius: 10px;
+  display: block;
+  transition: transform .3s ease;
 }
-
-.grid-galeria img:hover {
-  transform: scale(1.05);
-}
+.grid-galeria img:hover { transform: scale(1.04); }
 
 /* FOOTER */
 .footer {
-  background: #222;
-  color: white;
-  padding: 30px;
+  padding: 28px 20px;
   text-align: center;
+  color: #666;
+  background: #fff;
+}
+
+/* Responsive tweaks */
+@media (max-width: 800px) {
+  .hero-title { font-size: 34px; }
+  .hero-canvas { height: 260px; }
+  .grid-galeria img { height: 140px; }
 }
