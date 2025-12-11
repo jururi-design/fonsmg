@@ -1,90 +1,79 @@
+/* RESET */
 * { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: Arial, sans-serif; background: #ffffff; overflow-x: hidden; }
 
-body {
-  font-family: Arial, sans-serif;
-  background: #ffffff;
-  color: #111;
-}
-
-/* ----------------------------- HERO ----------------------------- */
+/* HERO */
 .hero {
-  width: 100%;
-  padding: 60px 20px;
-  text-align: center;
+  height: 100vh;
   display: flex;
+  align-items: center;
   justify-content: center;
+  text-align: center;
+  color: black;
+  padding: 40px;
 }
 
-.hero-content {
-  max-width: 900px;
-}
+.hero-title { font-size: 70px; font-weight: bold; }
+.hero-subtitle { font-size: 22px; margin-top: 10px; }
 
-.hero-title {
-  font-size: 42px;
-  margin-bottom: 20px;
-}
-
-.hero-subtitle,
-.hero-description {
+.hero-extra,
+.hero-extra2 {
+  margin-top: 20px;
   font-size: 18px;
-  line-height: 1.6;
-  color: #444;
-  margin-bottom: 25px;
+  max-width: 600px;
+  opacity: 0.8;
 }
 
 .btn-hero {
   display: inline-block;
-  padding: 12px 26px;
-  background: #ff6600;
-  color: #fff;
+  margin-top: 20px;
+  padding: 12px 25px;
+  background: orange;
+  color: white;
   text-decoration: none;
   border-radius: 10px;
   font-size: 18px;
-  font-weight: bold;
-  transition: 0.2s;
 }
+.btn-hero:hover { background: #cc5200; }
 
-.btn-hero:hover {
-  background: #e05500;
-}
+/* NARRATIVA */
+.narrativa { padding: 80px 40px; text-align: center; }
+.narrativa-text h2 { font-size: 40px; margin-bottom: 20px; }
 
-/* ----------------------------- GALERÍA ----------------------------- */
-.galeria {
-  padding: 60px 30px;
-  background: #fafafa;
-}
-
-.galeria-titulo {
-  font-size: 30px;
+/* SVG SECTION */
+.svg-section {
+  padding: 60px 40px;
+  background: #111;
+  color: white;
   text-align: center;
-  margin-bottom: 25px;
 }
+
+.svg-desc { margin-top: 10px; opacity: 0.8; }
+
+/* GALERÍA */
+.galeria { padding: 80px 40px; background: #f4f4f4; }
+.galeria-titulo { text-align: center; font-size: 40px; margin-bottom: 40px; }
 
 .grid-galeria {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 18px;
-  max-width: 1100px;
-  margin: auto;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 25px;
 }
 
 .grid-galeria img {
   width: 100%;
-  height: 160px;
+  height: 260px;
+  border-radius: 12px;
   object-fit: cover;
-  border-radius: 10px;
-  transition: 0.3s;
+  transition: .3s;
 }
 
-.grid-galeria img:hover {
-  transform: scale(1.05);
-}
+.grid-galeria img:hover { transform: scale(1.05); }
 
-/* ----------------------------- FOOTER ----------------------------- */
+/* FOOTER */
 .footer {
-  padding: 25px;
+  background: #222;
+  color: white;
+  padding: 30px;
   text-align: center;
-  background: #fff;
-  color: #555;
 }
-
