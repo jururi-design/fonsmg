@@ -1,59 +1,59 @@
-/* ========== THREE.JS ========== */
+/* ========== THREE.JS - animación debajo del botón ========== */
+/* Este script crea una esfera simple (como ejemplo) y la dibuja dentro
+   del contenedor #heroCanvas. El renderer se adapta al tamaño real del contenedor. */
+
+const container = document.getElementById('heroCanvas');
+
+/* escena y cámara */
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(
-  75,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  1000
-);
+const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
+camera.position.z = 6;
 
-const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setClearColor(0x0d0d0f);
-document.getElementById("heroCanvas").appendChild(renderer.domElement);
+/* renderer: alfa true para integrar con fondo del contenedor */
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+container.appendChild(renderer.domElement);
 
-// Objeto 3D
-const geometry = new THREE.SphereGeometry(2.5, 32, 32);
+/* objeto: esfera */
+const geometry = new THREE.SphereGeometry(1.6, 48, 48);
 const material = new THREE.MeshStandardMaterial({
   color: 0xff6600,
-  roughness: 0.3,
-  metalness: 0.8
+  roughness: 0.2,
+  metalness: 0.7
 });
 const sphere = new THREE.Mesh(geometry, material);
 scene.add(sphere);
 
-// Luces
-const light = new THREE.PointLight(0xffffff, 1.2);
-light.position.set(5, 5, 5);
-scene.add(light);
+/* luz ambiental + puntual */
+const ambient = new THREE.AmbientLight(0xffffff, 0.35);
+scene.add(ambient);
 
-camera.position.z = 6;
+const point = new THREE.PointLight(0xffffff, 1.25);
+point.position.set(3, 3, 5);
+scene.add(point);
 
+/* función para redimensionar renderer al tamaño del contenedor */
+function resizeRendererToContainer() {
+  const width = container.clientWidth;
+  const height = container.clientHeight;
+  if (renderer.domElement.width !== width || renderer.domElement.height !== height) {
+    renderer.setSize(width, height, false);
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+  }
+}
+
+/* animación */
 function animate() {
-  requestAnimationFrame(animate);
-  sphere.rotation.x += 0.002;
-  sphere.rotation.y += 0.003;
+  resizeRendererToContainer();
+
+  sphere.rotation.y += 0.006;
+  sphere.rotation.x += 0.003;
+
   renderer.render(scene, camera);
+  requestAnimationFrame(animate);
 }
 animate();
 
-// Resize
-window.addEventListener("resize", () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-});
-
-/* ========== GSAP ========== */
-gsap.from(".hero-title", { opacity: 0, y: -40, duration: 1 });
-gsap.from(".hero-subtitle", { opacity: 0, y: -20, duration: 1.2, delay: 0.3 });
-gsap.from(".btn-hero", { opacity: 0, duration: 1.2, delay: 0.6 });
-
-gsap.from("#svgLine path", {
-  strokeDasharray: 300,
-  strokeDashoffset: 300,
-  duration: 2,
-  scrollTrigger: "#svgLine"
-});
-
-
+/* ajustar al cambiar tamaño de ventana */
+window.addEventListener('resize', resizeRendererToContainer);
